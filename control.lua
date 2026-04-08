@@ -114,14 +114,12 @@ script.on_event("noct-flashlight-toggle", function(event)
 end)
 
 script.on_event(defines.events.on_tick, function()
-    -- Defensive: ensure persistence tables exist even on first tick
     storage.flashlight_state = storage.flashlight_state or {}
     for _, player in pairs(game.players) do
         local state = storage.flashlight_state[player.index] or {}
         local current_mode = player.render_mode
         local previous_mode = state.previous_mode or current_mode
 
-        -- Entering map view: remember current flashlight state and turn it off
         if previous_mode == defines.render_mode.game and current_mode ~= defines.render_mode.game then
             state.was_on_before_map = player.character and player.character.valid and
                                           player.character.is_flashlight_enabled() or false
@@ -131,14 +129,12 @@ script.on_event(defines.events.on_tick, function()
             end
         end
 
-        -- While in map view, ensure flashlight stays off
         if current_mode ~= defines.render_mode.game then
             if player.character and player.character.is_flashlight_enabled() then
                 player.character.disable_flashlight()
             end
         end
 
-        -- Exiting map view: restore flashlight to remembered state
         if previous_mode ~= defines.render_mode.game and current_mode == defines.render_mode.game then
             if state.in_map then
                 if player.character then
