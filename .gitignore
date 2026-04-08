@@ -40,5 +40,6 @@ luac.out
 *.hex
 
 # Code gen
+pat
 data.raw
 AGENTS.md

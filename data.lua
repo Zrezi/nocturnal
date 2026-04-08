@@ -96,4 +96,100 @@ data:extend({{
     smoke_count = 1,
     smoke_slow_down_factor = 1,
     subgroup = "explosions"
+}, {
+    type = "lamp",
+    name = "noct-lab-light",
+    flags = {"placeable-off-grid", "not-on-map", "not-flammable"},
+    hidden = true,
+    collision_box = {{0.0, 0.0}, {0.0, 0.0}},
+    selection_box = {{0.0, 0.0}, {0.0, 0.0}},
+    icon = constants.graphics("entity/lab/lab-cyan-light.png"),
+    light = {
+        intensity = constants.lab_light_intensity,
+        size = constants.lab_light_size,
+        color = constants.lab_light_color
+    },
+    picture_on = {
+        filename = constants.graphics("entity/lab/lab-cyan-light.png"),
+        priority = "extra-high",
+        width = 216,
+        height = 194,
+        frame_count = 33,
+        line_length = 11,
+        animation_speed = 1 / 3,
+        scale = 0.5,
+        blend_mode = "additive",
+        draw_as_light = true
+    },
+    energy_source = {
+        type = "void",
+        help_text = "No energy source required"
+    },
+    energy_usage_per_tick = "1W"
 }})
+
+-- Dim version for flickering effect
+data:extend({
+    {
+        type = "lamp",
+        name = "noct-lab-light-dim",
+        flags = {"placeable-off-grid", "not-on-map", "not-flammable"},
+        hidden = true,
+        collision_box = {{0.0, 0.0}, {0.0, 0.0}},
+        selection_box = {{0.0, 0.0}, {0.0, 0.0}},
+        icon = constants.graphics("entity/lab/lab-cyan-light.png"),
+        light = {
+            intensity = constants.lab_light_intensity * 0.5,
+            size = constants.lab_light_size * 0.9,
+            color = constants.lab_light_color
+        },
+        picture_on = {
+            filename = constants.graphics("entity/lab/lab-cyan-light.png"),
+            priority = "extra-high",
+            width = 216,
+            height = 194,
+            frame_count = 33,
+            line_length = 11,
+            animation_speed = 1 / 3,
+            scale = 0.5,
+            blend_mode = "additive",
+            draw_as_light = true
+        },
+        energy_source = {
+            type = "void",
+            help_text = "No energy source required"
+        },
+        energy_usage_per_tick = "1W"
+    },
+    {
+        type = "lamp",
+        name = "noct-lab-light-ultra-dim",
+        flags = {"placeable-off-grid", "not-on-map", "not-flammable"},
+        hidden = true,
+        collision_box = {{0.0, 0.0}, {0.0, 0.0}},
+        selection_box = {{0.0, 0.0}, {0.0, 0.0}},
+        icon = constants.graphics("entity/lab/lab-cyan-light.png"),
+        light = {
+            intensity = constants.lab_light_intensity * 0.2,
+            size = constants.lab_light_size * 0.7,
+            color = constants.lab_light_color
+        },
+        picture_on = {
+            filename = constants.graphics("entity/lab/lab-cyan-light.png"),
+            priority = "extra-high",
+            width = 216,
+            height = 194,
+            frame_count = 33,
+            line_length = 11,
+            animation_speed = 1 / 3,
+            scale = 0.5,
+            blend_mode = "additive",
+            draw_as_light = true
+        },
+        energy_source = {
+            type = "void",
+            help_text = "No energy source required"
+        },
+        energy_usage_per_tick = "1W"
+    }
+})

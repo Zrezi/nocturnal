@@ -72,4 +72,10 @@ data:extend{{
     setting_type = "startup",
     default_value = true,
     order="k"
+}, {
+    type = "bool-setting",
+    name = "noct-enhance-labs",
+    setting_type = "startup",
+    default_value = true,
+    order="l"
 }}

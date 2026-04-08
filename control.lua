@@ -4,6 +4,7 @@ local DIRECTION_LOOKUP = {defines.direction.north, defines.direction.northeast, 
 local SURFACES = {"nauvis"}
 
 local minimap = require("control/minimap")
+local labs = require("control/labs")
 
 local function _initialize()
     for _, name in ipairs(SURFACES) do
@@ -17,6 +18,7 @@ local function _initialize()
     if settings.startup["noct-hide-minimap"].value then
         minimap.initialize()
     end
+    labs.initialize()
 end
 script.on_init(_initialize)
 script.on_event(defines.events.on_cutscene_cancelled, _initialize)
@@ -26,6 +28,7 @@ local function _on_configuration_changed()
     if settings.startup["noct-hide-minimap"].value then
         minimap.on_configuration_changed()
     end
+    labs.initialize()
 end
 script.on_configuration_changed(_on_configuration_changed)
 
@@ -40,6 +43,10 @@ if settings.startup["noct-hide-minimap"].value then
     script.on_event(defines.events.on_player_changed_surface, minimap.on_surface_changed)
     script.on_event(defines.events.on_player_joined_game, minimap.on_player_connected)
     script.on_nth_tick(14, minimap.on_tick)
+end
+
+if settings.startup["noct-enhance-labs"].value then
+    script.on_nth_tick(5, labs.on_tick)
 end
 
 script.on_event(defines.events.on_equipment_inserted, function(event)

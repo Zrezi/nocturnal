@@ -10,22 +10,11 @@ if enhance_buildings then
         end
     end
 
-    for name, rocket in pairs(data.raw["rocket-silo-rocket"]) do
+ for name, rocket in pairs(data.raw["rocket-silo-rocket"]) do
         if rocket.glow_light and rocket.glow_light.size == 30 then
             rocket.glow_light.size = constants.rocket_glow_light_size
             rocket.glow_light.color = constants.rocket_glow_light_color
             rocket.glow_light.shift = {0, 2.0}
-        end
-    end
-
-    for name, lab in pairs(data.raw["lab"]) do
-        if lab.graphics_set and lab.graphics_set.working_visualisations then
-            table.insert(lab.graphics_set.working_visualisations, {
-                type = "light",
-                intensity = constants.lab_light_intensity,
-                size = constants.lab_light_size,
-                color = constants.lab_light_color
-            })
         end
     end
 end
