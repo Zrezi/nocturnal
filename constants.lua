@@ -62,4 +62,8 @@ return {
     lab_light_intensity = 2.1,
     lab_light_size = 10,
     lab_light_color = {r = 0, g = 0.1, b = 1.0},
+    
+    oil_refinery_light_intensity = 0.4,
+    oil_refinery_light_size = 20,
+    oil_refinery_light_color = {r = 1.0, g = 0.6, b = 0.15},
 }

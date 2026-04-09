@@ -4,6 +4,7 @@ local DIRECTION_LOOKUP = {defines.direction.north, defines.direction.northeast, 
 local SURFACES = {"nauvis"}
 
 local labs = require("control/labs")
+local oil_refineries = require("control/oil-refineries")
 
 local function _initialize()
     for _, name in ipairs(SURFACES) do
@@ -15,6 +16,7 @@ local function _initialize()
     end
     storage.flashlight_state = storage.flashlight_state or {}
     labs.initialize()
+    oil_refineries.initialize()
 end
 script.on_init(_initialize)
 script.on_event(defines.events.on_cutscene_cancelled, _initialize)
@@ -22,6 +24,7 @@ script.on_event(defines.events.on_cutscene_cancelled, _initialize)
 local function _on_configuration_changed()
     _initialize()
     labs.initialize()
+    oil_refineries.initialize()
 end
 script.on_configuration_changed(_on_configuration_changed)
 
@@ -29,6 +32,11 @@ script.on_event(defines.events.on_player_created, _initialize)
 
 if settings.startup["noct-enhance-labs"].value then
     script.on_nth_tick(5, labs.on_tick)
+end
+
+if settings.startup["noct-enhance-buildings"].value then
+    script.on_nth_tick(10, oil_refineries.on_tick)
+    script.on_event(defines.events.on_player_rotated_entity, oil_refineries.on_player_rotated_entity)
 end
 
 if settings.startup["noct-turn-toward-target"].value then

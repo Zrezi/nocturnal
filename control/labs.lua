@@ -1,7 +1,6 @@
 local constants = require("constants")
 
 local M = {}
-
 local LIGHT_TYPES = {"noct-lab-light", "noct-lab-light-dim", "noct-lab-light-ultra-dim"}
 
 local function _get_storage()

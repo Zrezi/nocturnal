@@ -77,7 +77,28 @@ if settings.startup["noct-enhance-labs"].value then
     })
 end
 
-
+if settings.startup["noct-enhance-buildings"].value then
+    data:extend({
+        {
+            type = "lamp",
+            name = "noct-oil-refinery-light",
+            flags = {"placeable-off-grid", "not-on-map", "not-flammable"},
+            hidden = true,
+            collision_box = {{0.0, 0.0}, {0.0, 0.0}},
+            selection_box = {{0.0, 0.0}, {0.0, 0.0}},
+            light = {
+                intensity = constants.oil_refinery_light_intensity,
+                size = constants.oil_refinery_light_size,
+                color = constants.oil_refinery_light_color
+            },
+            energy_source = {
+                type = "void",
+                help_text = "No energy source required"
+            },
+            energy_usage_per_tick = "1W"
+        }
+    })
+end
 
 if settings.startup["noct-enhance-projectiles"].value then
     data:extend({
