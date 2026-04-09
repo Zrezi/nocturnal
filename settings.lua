@@ -10,16 +10,10 @@ data:extend{{
     order="a"
 }, {
     type = "bool-setting",
-    name = "noct-hide-minimap",
-    setting_type = "startup",
-    default_value = true,
-    order="b"
-}, {
-    type = "bool-setting",
     name = "noct-hide-enemies-from-map",
     setting_type = "startup",
     default_value = true,
-    order="c"
+    order="b"
 }, {
     type = "bool-setting",
     name = "noct-disable-nightvision",

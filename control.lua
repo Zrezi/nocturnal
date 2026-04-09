@@ -3,7 +3,6 @@ local DIRECTION_LOOKUP = {defines.direction.north, defines.direction.northeast, 
                           defines.direction.west, defines.direction.northwest}
 local SURFACES = {"nauvis"}
 
-local minimap = require("control/minimap")
 local labs = require("control/labs")
 
 local function _initialize()
@@ -15,9 +14,6 @@ local function _initialize()
         end
     end
     storage.flashlight_state = storage.flashlight_state or {}
-    if settings.startup["noct-hide-minimap"].value then
-        minimap.initialize()
-    end
     labs.initialize()
 end
 script.on_init(_initialize)
@@ -25,45 +21,15 @@ script.on_event(defines.events.on_cutscene_cancelled, _initialize)
 
 local function _on_configuration_changed()
     _initialize()
-    if settings.startup["noct-hide-minimap"].value then
-        minimap.on_configuration_changed()
-    end
     labs.initialize()
 end
 script.on_configuration_changed(_on_configuration_changed)
 
-script.on_event(defines.events.on_player_created, function(event)
-    _initialize(event)
-    if settings.startup["noct-hide-minimap"].value then
-        minimap.on_player_connected(event)
-    end
-end)
-
-if settings.startup["noct-hide-minimap"].value then
-    script.on_event(defines.events.on_player_changed_surface, minimap.on_surface_changed)
-    script.on_event(defines.events.on_player_joined_game, minimap.on_player_connected)
-    script.on_nth_tick(14, minimap.on_tick)
-end
+script.on_event(defines.events.on_player_created, _initialize)
 
 if settings.startup["noct-enhance-labs"].value then
     script.on_nth_tick(5, labs.on_tick)
 end
-
-script.on_event(defines.events.on_equipment_inserted, function(event)
-    if event.equipment.name == "night-vision-equipment" then
-        if storage and not storage["noct-night-vision-quip"] then
-            game.print("So this is what night looks like.", {
-                color = {
-                    r = 1.0,
-                    g = 1.0,
-                    b = 0.3
-                },
-                sound = defines.print_sound.never
-            })
-            storage["noct-night-vision-quip"] = true
-        end
-    end
-end)
 
 if settings.startup["noct-turn-toward-target"].value then
     script.on_event(defines.events.on_selected_entity_changed, function(event)

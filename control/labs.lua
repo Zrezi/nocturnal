@@ -2,25 +2,46 @@ local constants = require("constants")
 
 local M = {}
 
+local LIGHT_TYPES = {"noct-lab-light", "noct-lab-light-dim", "noct-lab-light-ultra-dim"}
+
 local function _get_storage()
     storage.lab_lights = storage.lab_lights or {}
-    storage.lab_light_initial_ticks = storage.lab_light_initial_ticks or {}
     return storage.lab_lights
 end
 
 function M.initialize()
     if not settings.startup["noct-enhance-labs"].value then
         local lab_lights = storage.lab_lights or {}
-        for pos_key, light_entity in pairs(lab_lights) do
-            if light_entity and light_entity.valid then
-                light_entity.destroy()
+        for pos_key, light_data in pairs(lab_lights) do
+            local entity = type(light_data) == "table" and light_data.entity or light_data
+            if entity and entity.valid then
+                entity.destroy()
             end
         end
         storage.lab_lights = {}
-        storage.lab_light_initial_ticks = {}
         return
     end
-    _get_storage()
+    
+    local lab_lights = _get_storage()
+    
+    for pos_key, light_data in pairs(lab_lights) do
+        local entity = type(light_data) == "table" and light_data.entity or light_data
+        if entity and not entity.valid then
+            lab_lights[pos_key] = nil
+        end
+    end
+    
+    for _, surface in pairs(game.surfaces) do
+        for _, light_type in ipairs(LIGHT_TYPES) do
+            local stray_lights = surface.find_entities_filtered({name = light_type})
+            for _, light_entity in pairs(stray_lights) do
+                local pos_key = string.format("%d,%d,%s", light_entity.position.x, light_entity.position.y, surface.name)
+                if not lab_lights[pos_key] then
+                    light_entity.destroy()
+                end
+            end
+        end
+    end
 end
 
 function M.on_tick()
@@ -49,7 +70,7 @@ function M.on_tick()
         
         for _, lab in pairs(labs) do
             local pos_key = string.format("%d,%d,%s", lab.position.x, lab.position.y, surface.name)
-            local light_entity = lab_lights[pos_key]
+            local light_data = lab_lights[pos_key]
             local force_name = lab.force.name
             local has_queued_tech = force_research_cache[force_name] ~= nil
             
@@ -71,55 +92,57 @@ function M.on_tick()
             
             active_labs[pos_key] = true
             
-if is_actively_researching and not light_entity then
-                  light_entity = surface.create_entity({
-                      name = "noct-lab-light",
-                      position = lab.position,
-                      force = lab.force
-                  })
-                  if light_entity then
-                      lab_lights[pos_key] = light_entity
-                      storage.lab_light_initial_ticks[pos_key] = game.tick
-                  end
-              elseif not is_actively_researching and light_entity then
-                 if light_entity.valid then
-                     light_entity.destroy()
-                 end
-                 lab_lights[pos_key] = nil
-                 storage.lab_light_initial_ticks[pos_key] = nil
-             end
-            
-            if light_entity and light_entity.valid and is_actively_researching then
-                local initial_tick = storage.lab_light_initial_ticks[pos_key]
-                if not initial_tick then
-                    initial_tick = game.tick
-                    storage.lab_light_initial_ticks[pos_key] = initial_tick
-                end
-                local lights = {"noct-lab-light", "noct-lab-light-dim", "noct-lab-light-ultra-dim"}
+            if is_actively_researching then
                 local random_index = math.random(1, 3)
-                local current_type = lights[random_index]
+                local target_type = LIGHT_TYPES[random_index]
                 
-                if light_entity.name ~= current_type then
-                    local pos = light_entity.position
-                    light_entity.destroy()
-                    light_entity = surface.create_entity({
-                        name = current_type,
-                        position = pos,
+                -- Migrate old format (just entity) to new format ({entity, type})
+                if light_data and type(light_data) == "userdata" then
+                    local old_entity = light_data
+                    light_data = nil
+                end
+                
+                if not light_data then
+                    local light_entity = surface.create_entity({
+                        name = target_type,
+                        position = lab.position,
                         force = lab.force
                     })
                     if light_entity then
-                        lab_lights[pos_key] = light_entity
+                        lab_lights[pos_key] = {entity = light_entity, type = target_type}
+                    end
+                elseif light_data.type ~= target_type then
+                    if light_data.entity and light_data.entity.valid then
+                        light_data.entity.destroy()
+                    end
+                    local light_entity = surface.create_entity({
+                        name = target_type,
+                        position = lab.position,
+                        force = lab.force
+                    })
+                    if light_entity then
+                        lab_lights[pos_key] = {entity = light_entity, type = target_type}
+                    else
+                        lab_lights[pos_key] = nil
                     end
                 end
+            elseif light_data then
+                local entity = type(light_data) == "table" and light_data.entity or light_data
+                if entity and entity.valid then
+                    entity.destroy()
+                end
+                lab_lights[pos_key] = nil
             end
         end
     end
     
-    for pos_key, light_entity in pairs(lab_lights) do
-        if not active_labs[pos_key] and light_entity and light_entity.valid then
-            light_entity.destroy()
+    for pos_key, light_data in pairs(lab_lights) do
+        if not active_labs[pos_key] then
+            local entity = type(light_data) == "table" and light_data.entity or light_data
+            if entity and entity.valid then
+                entity.destroy()
+            end
             lab_lights[pos_key] = nil
-            storage.lab_light_initial_ticks[pos_key] = nil
         end
     end
 end

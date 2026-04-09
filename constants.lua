@@ -21,7 +21,7 @@ return {
     light_color_locomotive = {r = 1.0, g = 1.0, b = 0.9},
 
     explosion_light_intensity = 0.8,
-    explosion_light_size_mult_normal = 5,
+    explosion_light_size_mult_normal = 4,
     explosion_light_size_mult_death = 7,
     explosion_light_color_default = {r = 1.0, g = 0.85, b = 0.7},
     explosion_light_color_uranium = {r = 0.42, g = 0.9, b = 0.32},
@@ -59,7 +59,7 @@ return {
     nuke_effect_full_strength_dist_mult = 1.4,
     nuke_effect_max_dist_mult = 1.5,
 
-    lab_light_intensity = 0.6,
-    lab_light_size = 12,
-    lab_light_color = {r = 0.15, g = 0.4, b = 1.0}
+    lab_light_intensity = 2.1,
+    lab_light_size = 10,
+    lab_light_color = {r = 0, g = 0.1, b = 1.0}
 }
