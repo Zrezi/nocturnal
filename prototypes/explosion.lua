@@ -137,11 +137,10 @@ local function enhance_building_explosion(name, explosion, light_scale)
     slow_explosion_animation(explosion, constants.explosion_slow_rate_normal)
 end
 
-local enhance_explosions = settings.startup["noct-enhance-explosions"].value
-local light_scale = settings.startup["noct-explosion-light-scale"].value
-
-if enhance_explosions then
+if settings.startup["noct-enhance-explosions"].value then
     enhance_nuke()
+
+    local light_scale = settings.startup["noct-explosion-light-scale"].value
 
     for name, explosion in pairs(data.raw.explosion) do
         enhance_explosion(name, explosion, light_scale)

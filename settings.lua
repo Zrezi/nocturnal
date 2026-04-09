@@ -56,7 +56,7 @@ data:extend{{
     type = "double-setting",
     name = "noct-explosion-light-scale",
     setting_type = "startup",
-    default_value = 1.0,
+    default_value = 1.4,
     minimum_value = 0.5,
     maximum_value = 3.0,
     order="j"
@@ -72,4 +72,18 @@ data:extend{{
     setting_type = "startup",
     default_value = true,
     order="l"
+}, {
+    type = "bool-setting",
+    name = "noct-enhance-fires",
+    setting_type = "startup",
+    default_value = true,
+    order="m"
+}, {
+    type = "double-setting",
+    name = "noct-fire-spread-rate",
+    setting_type = "startup",
+    default_value = 1.0,
+    minimum_value = 0.1,
+    maximum_value = 3.0,
+    order="n"
 }}

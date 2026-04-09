@@ -10,7 +10,7 @@ if enhance_buildings then
         end
     end
 
- for name, rocket in pairs(data.raw["rocket-silo-rocket"]) do
+    for name, rocket in pairs(data.raw["rocket-silo-rocket"]) do
         if rocket.glow_light and rocket.glow_light.size == 30 then
             rocket.glow_light.size = constants.rocket_glow_light_size
             rocket.glow_light.color = constants.rocket_glow_light_color

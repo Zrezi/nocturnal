@@ -61,5 +61,5 @@ return {
 
     lab_light_intensity = 2.1,
     lab_light_size = 10,
-    lab_light_color = {r = 0, g = 0.1, b = 1.0}
+    lab_light_color = {r = 0, g = 0.1, b = 1.0},
 }
