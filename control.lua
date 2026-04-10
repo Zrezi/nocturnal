@@ -60,14 +60,14 @@ script.on_event("noct-flashlight-toggle", function(event)
     local player = game.players[event.player_index]
     local character = player.character
 
+    if not player or not character then
+        return
+    end
+
     if player.render_mode ~= defines.render_mode.game then
         if character and character.is_flashlight_enabled() then
             character.disable_flashlight()
         end
-        return
-    end
-
-    if not character then
         return
     end
 

@@ -1,19 +1,17 @@
-local constants = require("constants")
-
-local enhance_buildings = settings.startup["noct-enhance-buildings"].value
+local enhance_buildings = settings.startup["noct-enhance-machines"].value
 
 if enhance_buildings then
     for name, silo in pairs(data.raw["rocket-silo"]) do
         if silo.base_engine_light and silo.base_engine_light.size == 25 then
-            silo.base_engine_light.size = constants.rocket_silo_light_size
-            silo.base_engine_light.color = constants.rocket_silo_light_color
+            silo.base_engine_light.size = 90
+            silo.base_engine_light.color = {r = 0.9, g = 0.64, b = 0.52}
         end
     end
 
     for name, rocket in pairs(data.raw["rocket-silo-rocket"]) do
         if rocket.glow_light and rocket.glow_light.size == 30 then
-            rocket.glow_light.size = constants.rocket_glow_light_size
-            rocket.glow_light.color = constants.rocket_glow_light_color
+            rocket.glow_light.size = 35
+            rocket.glow_light.color = {r = 0.85, g = 0.55, b = 0.45, a = 0.7}
             rocket.glow_light.shift = {0, 2.0}
         end
     end
@@ -23,9 +21,9 @@ if enhance_buildings then
         for _, viz in pairs(refinery.graphics_set.working_visualisations) do
             if viz.animation and viz.animation.draw_as_glow then
                 viz.light = {
-                    intensity = constants.oil_refinery_light_intensity,
-                    size = constants.oil_refinery_light_size,
-                    color = constants.oil_refinery_light_color
+                    intensity = 0.4,
+                    size = 20,
+                    color = {r = 1.0, g = 0.6, b = 0.15}
                 }
                 viz.effect = 'uranium-glow'
             end
@@ -45,11 +43,10 @@ if enhance_buildings then
         for _, viz in pairs(foundry.graphics_set.working_visualisations) do
             if viz.animation and viz.animation.draw_as_glow then
                 viz.light = {
-                    intensity = constants.oil_refinery_light_intensity,
-                    size = constants.oil_refinery_light_size,
-                    color = constants.oil_refinery_light_color
+                    intensity = 0.3,
+                    size = 12,
+                    color = {r = 1.0, g = 0.3, b = 0.0}
                 }
-                viz.effect = 'uranium-glow'
             end
         end
     end

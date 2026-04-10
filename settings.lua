@@ -42,7 +42,7 @@ data:extend{{
     order="g"
 }, {
     type = "bool-setting",
-    name = "noct-enhance-buildings",
+    name = "noct-enhance-machines",
     setting_type = "startup",
     default_value = true,
     order="h"

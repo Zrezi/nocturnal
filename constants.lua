@@ -48,11 +48,6 @@ return {
     },
     explosion_buildings_skip = {"storage"},
 
-    rocket_silo_light_size = 90,
-    rocket_silo_light_color = {r = 0.9, g = 0.64, b = 0.52},
-    rocket_glow_light_size = 35,
-    rocket_glow_light_color = {r = 0.85, g = 0.55, b = 0.45, a = 0.7},
-
     nuke_effect_duration_mult = 2.2,
     nuke_effect_ease_in_mult = 3,
     nuke_effect_ease_out_mult = 1.5,
@@ -62,8 +57,4 @@ return {
     lab_light_intensity = 2.4,
     lab_light_size = 10,
     lab_light_color = {r = 0, g = 0.1, b = 1.0},
-    
-    oil_refinery_light_intensity = 0.4,
-    oil_refinery_light_size = 20,
-    oil_refinery_light_color = {r = 1.0, g = 0.6, b = 0.15},
 }
