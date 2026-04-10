@@ -59,7 +59,7 @@ return {
     nuke_effect_full_strength_dist_mult = 1.4,
     nuke_effect_max_dist_mult = 1.5,
 
-    lab_light_intensity = 2.1,
+    lab_light_intensity = 2.4,
     lab_light_size = 10,
     lab_light_color = {r = 0, g = 0.1, b = 1.0},
     
