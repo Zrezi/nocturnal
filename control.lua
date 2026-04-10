@@ -1,7 +1,7 @@
 local DIRECTION_LOOKUP = {defines.direction.north, defines.direction.northeast, defines.direction.east,
                           defines.direction.southeast, defines.direction.south, defines.direction.southwest,
                           defines.direction.west, defines.direction.northwest}
-local SURFACES = {"nauvis"}
+local SURFACES = {"nauvis", "vulcanus", "fulgora", "gleba", "aquilo"}
 
 local labs = require("control/labs")
 
@@ -9,7 +9,7 @@ local function _initialize()
     for _, name in ipairs(SURFACES) do
         local s = game.surfaces[name]
         if s then
-            s.daytime = 0.5
+            s.daytime = (name == "vulcanus" or name == "aquilo") and 0.5125 or 0.5
             s.freeze_daytime = true
         end
     end
@@ -17,6 +17,7 @@ local function _initialize()
     labs.initialize()
 end
 script.on_init(_initialize)
+script.on_event(defines.events.on_surface_created, _initialize)
 script.on_event(defines.events.on_cutscene_cancelled, _initialize)
 
 local function _on_configuration_changed()
