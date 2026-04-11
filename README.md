@@ -14,3 +14,5 @@ Inspired by the following mods, in no particular order:
 * https://mods.factorio.com/mod/NicerFuelGlow-Fixed
 * https://mods.factorio.com/mod/lightorio
 * https://mods.factorio.com/mod/leave_the_lights_on
+
+I've added some translations from DeepL/Google Translate/ChatGPT for basic locale support, but feel free to create a PR with improvements, corrections, or new languages.
