@@ -33,8 +33,18 @@ if enhance_buildings then
     local electromag = data.raw["assembling-machine"]["electromagnetic-plant"]
     if electromag and electromag.graphics_set and electromag.graphics_set.working_visualisations then
         local viz = electromag.graphics_set.working_visualisations[#electromag.graphics_set.working_visualisations]
-        viz.light.intensity = 0.8
-        viz.light.size = 16
+        viz.light = {
+            {
+                intensity = 0.8,
+                size = 8,
+                color = {b = 1, g = 0.25, r = 0.2}
+            },
+            {
+                intensity = 0.35,
+                size = 22,
+                color = {b = 1, g = 0.15, r = 0.1}
+            }
+        }
         viz.effect = 'uranium-glow'
     end
 
@@ -47,6 +57,29 @@ if enhance_buildings then
                     size = 12,
                     color = {r = 1.0, g = 0.3, b = 0.0}
                 }
+            end
+        end
+    end
+
+    local cryo = data.raw["assembling-machine"]["cryogenic-plant"]
+    if cryo and cryo.graphics_set and cryo.graphics_set.working_visualisations then
+        for _, viz in pairs(cryo.graphics_set.working_visualisations) do
+            if viz.animation and viz.animation.draw_as_glow then
+                viz.light = {
+                    {
+                        intensity = 0.3,
+                        size = 4,
+                        shift = {1.8, -0.5},
+                        color = {r = 1.0, g = 0.3, b = 0.15}
+                    },
+                    {
+                        intensity = 0.1,
+                        size = 9,
+                        shift = {1.8, -0.5},
+                        color = {r = 1.0, g = 0.2, b = 0.1}
+                    }
+                }
+                viz.effect = 'uranium-glow'
             end
         end
     end
