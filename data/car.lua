@@ -64,7 +64,7 @@ local function _update_tank_lights(tank)
         table.insert(tank.light, {
             shift = {0, -2},
             intensity = halo == "dark" and constants.intensity_dark or constants.intensity_bright,
-            size = halo == "dark" and 20 or 34,
+            size = halo == "dark" and 22 or 28,
             color = constants.light_color_tank
         })
     end

@@ -12,8 +12,8 @@ return {
         return MOD_PATH .. "/sounds/" .. path
     end,
     
-    intensity_dark = 0.1,
-    intensity_bright = 0.4,
+    intensity_dark = 0.15,
+    intensity_bright = 0.5,
 
     light_color_character = {r = 1.0, g = 0.75, b = 0.5},
     light_color_car = {r = 1.0, g = 0.75, b = 0.5},
