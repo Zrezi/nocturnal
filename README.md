@@ -2,8 +2,6 @@
 
 > Permanent night mod with lighting improvements toward the player, their weapons, vehicles, machines, and the environment. Includes lots of settings to configure your own experience.
 
-Work-In-Progress! Check out the changelog.
-
 Inspired by the following mods, in no particular order:
 
 * https://mods.factorio.com/mod/light-overhaul

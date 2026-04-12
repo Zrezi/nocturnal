@@ -1,6 +1,6 @@
 {
 	"name": "nocturnal",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"title": "Nocturnal",
 	"author": "zrezi",
 	"dependencies": ["base >= 2.0.0"],
