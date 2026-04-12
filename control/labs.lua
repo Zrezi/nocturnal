@@ -3,25 +3,37 @@ local constants = require("constants")
 local M = {}
 local LIGHT_TYPES = {"noct-lab-light", "noct-lab-light-dim", "noct-lab-light-ultra-dim"}
 
-local function _get_storage()
+local function _get_lab_cache()
+    storage.lab_cache = storage.lab_cache or {}
+    return storage.lab_cache
+end
+
+local function _get_light_cache()
     storage.lab_lights = storage.lab_lights or {}
     return storage.lab_lights
 end
 
+local function _get_surface_cache(surface_name)
+    local lab_cache = _get_lab_cache()
+    lab_cache[surface_name] = lab_cache[surface_name] or {}
+    return lab_cache[surface_name]
+end
+
 function M.initialize()
+    local lab_cache = _get_lab_cache()
+    local lab_lights = _get_light_cache()
+    
     if not settings.startup["noct-enhance-labs"].value then
-        local lab_lights = storage.lab_lights or {}
-        for pos_key, light_data in pairs(lab_lights) do
+        for _, light_data in pairs(lab_lights) do
             local entity = type(light_data) == "table" and light_data.entity or light_data
             if entity and entity.valid then
                 entity.destroy()
             end
         end
         storage.lab_lights = {}
+        storage.lab_cache = {}
         return
     end
-    
-    local lab_lights = _get_storage()
     
     for pos_key, light_data in pairs(lab_lights) do
         local entity = type(light_data) == "table" and light_data.entity or light_data
@@ -30,15 +42,39 @@ function M.initialize()
         end
     end
     
+    for surface_name, surface_labs in pairs(lab_cache) do
+        for unit_number, lab_entity in pairs(surface_labs) do
+            if not lab_entity or not lab_entity.valid then
+                surface_labs[unit_number] = nil
+            end
+        end
+    end
+    
     for _, surface in pairs(game.surfaces) do
         for _, light_type in ipairs(LIGHT_TYPES) do
             local stray_lights = surface.find_entities_filtered({name = light_type})
             for _, light_entity in pairs(stray_lights) do
-                local pos_key = string.format("%d,%d,%s", light_entity.position.x, light_entity.position.y, surface.name)
-                if not lab_lights[pos_key] then
+                local labs = surface.find_entities_filtered({type = "lab", position = light_entity.position, radius = 1})
+                local has_lab = false
+                for _, lab in pairs(labs) do
+                    if lab_lights[lab.unit_number] then
+                        has_lab = true
+                        break
+                    end
+                end
+                if not has_lab then
                     light_entity.destroy()
                 end
             end
+        end
+    end
+    
+    for _, surface in pairs(game.surfaces) do
+        local labs = surface.find_entities_filtered({type = "lab"})
+        local surface_cache = _get_surface_cache(surface.name)
+        
+        for _, lab in pairs(labs) do
+            surface_cache[lab.unit_number] = lab
         end
     end
 end
@@ -48,7 +84,8 @@ function M.on_tick()
         return
     end
     
-    local lab_lights = _get_storage()
+    local lab_cache = _get_lab_cache()
+    local lab_lights = _get_light_cache()
     
     local force_research_cache = {}
     for _, force in pairs(game.forces) do
@@ -64,12 +101,20 @@ function M.on_tick()
     
     local active_labs = {}
     
-    for _, surface in pairs(game.surfaces) do
-        local labs = surface.find_entities_filtered({type = "lab"})
+    for surface_name, surface_labs in pairs(lab_cache) do
+        local surface = game.surfaces[surface_name]
+        if not surface or not surface.valid then
+            lab_cache[surface_name] = nil
+            goto next_surface
+        end
         
-        for _, lab in pairs(labs) do
-            local pos_key = string.format("%d,%d,%s", lab.position.x, lab.position.y, surface.name)
-            local light_data = lab_lights[pos_key]
+        for unit_number, lab in pairs(surface_labs) do
+            if not lab or not lab.valid then
+                surface_labs[unit_number] = nil
+                goto next_lab
+            end
+            
+            local light_data = lab_lights[unit_number]
             local force_name = lab.force.name
             local has_queued_tech = force_research_cache[force_name] ~= nil
             
@@ -89,15 +134,13 @@ function M.on_tick()
             
             local is_actively_researching = lab.active and has_all_science and has_queued_tech and lab.energy > 0
             
-            active_labs[pos_key] = true
+            active_labs[unit_number] = true
             
             if is_actively_researching then
                 local random_index = math.random(1, 3)
                 local target_type = LIGHT_TYPES[random_index]
                 
-                -- Migrate old format (just entity) to new format ({entity, type})
                 if light_data and type(light_data) == "userdata" then
-                    local old_entity = light_data
                     light_data = nil
                 end
                 
@@ -108,7 +151,7 @@ function M.on_tick()
                         force = lab.force
                     })
                     if light_entity then
-                        lab_lights[pos_key] = {entity = light_entity, type = target_type}
+                        lab_lights[unit_number] = {entity = light_entity, type = target_type}
                     end
                 elseif light_data.type ~= target_type then
                     if light_data.entity and light_data.entity.valid then
@@ -120,9 +163,9 @@ function M.on_tick()
                         force = lab.force
                     })
                     if light_entity then
-                        lab_lights[pos_key] = {entity = light_entity, type = target_type}
+                        lab_lights[unit_number] = {entity = light_entity, type = target_type}
                     else
-                        lab_lights[pos_key] = nil
+                        lab_lights[unit_number] = nil
                     end
                 end
             elseif light_data then
@@ -130,19 +173,77 @@ function M.on_tick()
                 if entity and entity.valid then
                     entity.destroy()
                 end
-                lab_lights[pos_key] = nil
+                lab_lights[unit_number] = nil
             end
+            ::next_lab::
         end
+        ::next_surface::
     end
     
-    for pos_key, light_data in pairs(lab_lights) do
-        if not active_labs[pos_key] then
+    for unit_number, light_data in pairs(lab_lights) do
+        if not active_labs[unit_number] then
             local entity = type(light_data) == "table" and light_data.entity or light_data
             if entity and entity.valid then
                 entity.destroy()
             end
-            lab_lights[pos_key] = nil
+            lab_lights[unit_number] = nil
         end
+    end
+end
+
+function M.on_built_entity(event)
+    if event.entity.type ~= "lab" then
+        return
+    end
+    
+    local surface_cache = _get_surface_cache(event.entity.surface.name)
+    surface_cache[event.entity.unit_number] = event.entity
+end
+
+function M.on_robot_built_entity(event)
+    if event.entity.type ~= "lab" then
+        return
+    end
+    
+    local surface_cache = _get_surface_cache(event.entity.surface.name)
+    surface_cache[event.entity.unit_number] = event.entity
+end
+
+function M.on_entity_died(event)
+    if event.entity.type ~= "lab" then
+        return
+    end
+    
+    local surface_cache = _get_surface_cache(event.entity.surface.name)
+    surface_cache[event.entity.unit_number] = nil
+    
+    local lab_lights = _get_light_cache()
+    lab_lights[event.entity.unit_number] = nil
+end
+
+function M.on_entity_cloned(event)
+    if event.old_entity.type ~= "lab" then
+        return
+    end
+    
+    local old_surface_cache = _get_surface_cache(event.old_entity.surface.name)
+    local new_surface_cache = _get_surface_cache(event.new_entity.surface.name)
+    
+    old_surface_cache[event.old_entity.unit_number] = nil
+    new_surface_cache[event.new_entity.unit_number] = event.new_entity
+    
+    local lab_lights = _get_light_cache()
+    local old_light_data = lab_lights[event.old_entity.unit_number]
+    if old_light_data then
+        local new_light = event.new_entity.surface.create_entity({
+            name = old_light_data.type,
+            position = event.new_entity.position,
+            force = event.new_entity.force
+        })
+        if new_light then
+            lab_lights[event.new_entity.unit_number] = {entity = new_light, type = old_light_data.type}
+        end
+        lab_lights[event.old_entity.unit_number] = nil
     end
 end
 

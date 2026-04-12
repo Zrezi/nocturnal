@@ -30,6 +30,10 @@ script.on_event(defines.events.on_player_created, _initialize)
 
 if settings.startup["noct-enhance-labs"].value then
     script.on_nth_tick(5, labs.on_tick)
+    script.on_event(defines.events.on_built_entity, labs.on_built_entity)
+    script.on_event(defines.events.on_robot_built_entity, labs.on_robot_built_entity)
+    script.on_event(defines.events.on_entity_died, labs.on_entity_died)
+    script.on_event(defines.events.on_entity_cloned, labs.on_entity_cloned)
 end
 
 if settings.startup["noct-turn-toward-target"].value then
